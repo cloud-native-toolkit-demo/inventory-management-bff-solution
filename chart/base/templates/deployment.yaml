@@ -5,7 +5,7 @@ metadata:
   annotations:
   {{- if and .Values.vcsInfo.repoUrl .Values.vcsInfo.branch }}
     app.openshift.io/vcs-ref: {{ .Values.vcsInfo.branch }}
-    app.openshift.io/vcs-uri: {{ .Values.vcsInfo.repoUrl }}
+    app.openshift.io/vcs-uri: {{ trimSuffix ".git" .Values.vcsInfo.repoUrl }}
   {{- end }}
   {{- if .Values.connectsTo }}
     app.openshift.io/connects-to: {{ printf "[{\"apiVersion\":\"apps/v1\",\"kind\":\"Deployment\",\"name\":%s}]" (toJson .Values.connectsTo) | squote }}
@@ -61,7 +61,7 @@ spec:
               value: ""
             - name: LOG_LEVEL
               value: {{ .Values.logLevel | quote }}
-            - name: SERVICE_URL
+            - name: API_HOST
               value: {{ printf "%s:80" .Values.connectsTo | quote }}
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
